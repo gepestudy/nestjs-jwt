@@ -10,10 +10,15 @@ import * as argon from 'argon2';
 import { Tokens } from './types';
 import { JwtService } from '@nestjs/jwt';
 import { Prisma } from '@prisma/client';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService, private jwtService: JwtService) {}
+  constructor(
+    private prisma: PrismaService,
+    private jwtService: JwtService,
+    private config: ConfigService,
+  ) {}
 
   async signupLocal(dto: AuthDto): Promise<Tokens> {
     try {
@@ -143,7 +148,7 @@ export class AuthService {
         },
         {
           expiresIn: 60 * 60,
-          secret: 'at-secret',
+          secret: this.config.get('AT_SECRET'),
         },
       ),
       await this.jwtService.signAsync(
@@ -153,7 +158,7 @@ export class AuthService {
         },
         {
           expiresIn: 60 * 60 * 24,
-          secret: 'rt-secret',
+          secret: this.config.get('RT_SECRET'),
         },
       ),
     ]);

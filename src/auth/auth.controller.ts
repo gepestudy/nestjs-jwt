@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   ForbiddenException,
-  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -13,7 +12,7 @@ import {
   GetCurrentUserId,
   Public,
 } from 'src/common/decorators';
-import { AtGuard, RtGuard } from 'src/common/guard';
+import { RtGuard } from 'src/common/guard';
 import { AuthService } from './auth.service';
 import { AuthDto } from './dto';
 import { Tokens } from './types';
@@ -60,7 +59,7 @@ export class AuthController {
     return this.authService.me(email);
   }
 
-  @Get('admin')
+  @Post('admin')
   @HttpCode(HttpStatus.OK)
   async admin() {
     return { passed: true };
