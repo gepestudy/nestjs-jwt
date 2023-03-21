@@ -34,7 +34,10 @@ export class AuthService {
         newUser.email,
       );
       await this.updateRtHash(newUser.id, refresh_token);
-      return { access_token, refresh_token };
+      delete newUser.hash;
+      delete newUser.hashedRt;
+      delete newUser.role;
+      return { access_token, refresh_token, user: newUser };
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code == 'P2002') {
@@ -64,7 +67,10 @@ export class AuthService {
         user.email,
       );
       await this.updateRtHash(user.id, refresh_token);
-      return { refresh_token, access_token };
+      delete user.hash;
+      delete user.hashedRt;
+      delete user.role;
+      return { refresh_token, access_token, user };
     } catch (error) {
       console.log({ error });
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
@@ -124,7 +130,11 @@ export class AuthService {
       user.email,
     );
     await this.updateRtHash(user.id, refresh_token);
-    return { refresh_token, access_token };
+    delete user.hash;
+    delete user.hashedRt;
+    delete user.role;
+
+    return { refresh_token, access_token, user };
   }
 
   async updateRtHash(userId: number, rereshToken: string) {
@@ -139,7 +149,10 @@ export class AuthService {
     });
   }
 
-  async getToken(userId: number, email: string): Promise<Tokens> {
+  async getToken(
+    userId: number,
+    email: string,
+  ): Promise<{ access_token: string; refresh_token: string }> {
     const [at, rt] = await Promise.all([
       await this.jwtService.signAsync(
         {
