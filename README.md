@@ -35,6 +35,9 @@ $ yarn install
 ## Running the app
 
 ```bash
+# run docker
+$ docker compose up db -d
+
 # development
 $ yarn run start
 
